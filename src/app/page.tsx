@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import cover_img from '../../public/images/startpage_cover.webp'
 
 const categories = [
   { name: 'Nature', image: '/placeholder.svg?height=300&width=400' },
@@ -13,7 +14,7 @@ export default function Home() {
     <main className="min-h-screen">
       <div className="relative h-screen">
         <Image
-          src="/placeholder.svg?height=1080&width=1920"
+          src={cover_img}
           alt="Featured photograph"
           layout="fill"
           objectFit="cover"

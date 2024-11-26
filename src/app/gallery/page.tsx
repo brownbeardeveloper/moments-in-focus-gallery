@@ -125,7 +125,7 @@ export default function Gallery() {
                       e.preventDefault()
                       const comment = (e.target as HTMLFormElement).comment.value
                       handleComment(photo.id, comment)
-                      ;(e.target as HTMLFormElement).reset()
+                        ; (e.target as HTMLFormElement).reset()
                     }} className="mt-4">
                       <Input name="comment" placeholder="Add a comment" className="mb-2" />
                       <Button type="submit">Post Comment</Button>
