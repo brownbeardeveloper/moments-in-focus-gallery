@@ -77,6 +77,23 @@ export default function Gallery() {
     setSelectedPhotoIndex(newIndex)
   }
 
+  const handleLike = (id: number) => {
+    setGalleryPhotos(photos =>
+      photos.map(photo =>
+        photo.id === id ? { ...photo, likes: photo.likes + 1 } : photo
+      )
+    )
+  }
+
+  const handleComment = (id: number, comment: string) => {
+    if (!comment.trim()) return
+    setGalleryPhotos(photos =>
+      photos.map(photo =>
+        photo.id === id ? { ...photo, comments: [...photo.comments, comment] } : photo
+      )
+    )
+  }
+
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -117,7 +134,7 @@ export default function Gallery() {
               </div>
               <div className="p-4">
                 <div className="flex items-center justify-between mb-2">
-                  <Button variant="ghost" onClick={() => (null)}>
+                  <Button variant="ghost" onClick={() => handleLike(photo.id)}>
                     <Heart className="mr-2" /> {photo.likes}
                   </Button>
                   <Dialog>
@@ -138,7 +155,12 @@ export default function Gallery() {
                           <p key={index} className="bg-gray-100 p-2 rounded">{comment}</p>
                         ))}
                       </div>
-                      <form onSubmit={(e) => { e.preventDefault() }} className="mt-4">
+                      <form onSubmit={(e) => {
+                        e.preventDefault()
+                        const comment = (e.target as HTMLFormElement).comment.value
+                        handleComment(photo.id, comment)
+                          ; (e.target as HTMLFormElement).reset()
+                      }} className="mt-4">
                         <Input name="comment" placeholder="Add a comment" className="mb-2" />
                         <Button type="submit">Post Comment</Button>
                       </form>
@@ -187,8 +209,55 @@ export default function Gallery() {
           >
             <ChevronRight size={40} />
           </button>
+
+          {/* Like and Comment buttons */}
+          <div className="absolute bottom-4 right-4 flex gap-2 z-50">
+            <Button
+              variant="ghost"
+              className="text-white hover:bg-white/20"
+              onClick={() => handleLike(galleryPhotos[selectedPhotoIndex].id)}
+            >
+              <Heart className="mr-2" />
+              {galleryPhotos[selectedPhotoIndex].likes}
+            </Button>
+
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="ghost" className="text-white hover:bg-white/20">
+                  <MessageCircle className="mr-2" />
+                  {galleryPhotos[selectedPhotoIndex].comments.length}
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Comments</DialogTitle>
+                  <DialogDescription>
+                    View and add comments for this photo.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="mt-4 space-y-2">
+                  {galleryPhotos[selectedPhotoIndex].comments.map((comment, index) => (
+                    <p key={index} className="bg-gray-100 p-2 rounded">{comment}</p>
+                  ))}
+                </div>
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault()
+                    const comment = (e.target as HTMLFormElement).comment.value
+                    handleComment(galleryPhotos[selectedPhotoIndex].id, comment)
+                      ; (e.target as HTMLFormElement).reset()
+                  }}
+                  className="mt-4"
+                >
+                  <Input name="comment" placeholder="Add a comment" className="mb-2" />
+                  <Button type="submit">Post Comment</Button>
+                </form>
+              </DialogContent>
+            </Dialog>
+          </div>
         </div>
       )}
     </>
   )
 }
+
